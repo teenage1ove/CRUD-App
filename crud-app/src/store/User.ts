@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { IUserList, userList } from '../data'
 
 const LS_USERS_KEY = 'luk'
 

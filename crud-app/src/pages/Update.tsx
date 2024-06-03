@@ -16,6 +16,37 @@ function Update() {
         email: email
     })
     
+    const [error, setError] = useState({
+        minLengthError: false,
+        maxLengthError: false,
+    })
+
+    const validateForm = (name:string, email:string) => {
+        if (name.length === 0 || email.length === 0) {
+            setError({
+                ...error,
+                minLengthError: true
+            })
+        } else {
+            setError({
+                ...error,
+                minLengthError: false
+            })
+        }
+
+        if (name.length > 30 || email.length > 30) {
+            setError({
+                ...error,
+                maxLengthError: true
+            })
+        } else {
+            setError({
+                ...error,
+                maxLengthError: false
+            })
+        }
+    }
+
     const {updateUser} = useActions()
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,10 +61,15 @@ function Update() {
                 email: e.target.value
             })
         }
+        validateForm(input.name, input.email)
     }
 
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (input.name.length === 0 || input.email.length === 0) {
+            setError({...error, minLengthError: true})
+            return
+        } 
         updateUser({
             id: id,
             name: input.name,
@@ -71,6 +107,8 @@ function Update() {
                             onChange={handleChangeInput}
                             />
                     </div>
+                    {error.maxLengthError ? <p className='text-red-600'>Max length 30</p>: ''}
+                    {error.minLengthError ? <p className='text-red-600'>Min length 1</p>: ''}
                     <button className='py-2 px-3 bg-gray-500 rounded-md hover:shadow-md'>Update</button>
                 </form>
             </div>

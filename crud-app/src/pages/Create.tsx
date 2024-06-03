@@ -10,10 +10,41 @@ function Create() {
         name: '',
         email: ''
     })
+    const [error, setError] = useState({
+        minLengthError: false,
+        maxLengthError: false,
+    })
     const users = useAppSelector(state => state.users)
     const {addUser} = useActions()
 
+    const validateForm = (name:string, email:string) => {
+        if (name.length === 0 || email.length === 0) {
+            setError({
+                ...error,
+                minLengthError: true
+            })
+        } else {
+            setError({
+                ...error,
+                minLengthError: false
+            })
+        }
+
+        if (name.length > 30 || email.length > 30) {
+            setError({
+                ...error,
+                maxLengthError: true
+            })
+        } else {
+            setError({
+                ...error,
+                maxLengthError: false
+            })
+        }
+    }
+
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+
         if (e.target.name === 'name') {
             setInput({
                 ...input,
@@ -25,10 +56,17 @@ function Create() {
                 email: e.target.value
             })
         }
+        validateForm(input.name, input.email)
+        
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (input.name.length === 0 || input.email.length === 0) {
+            setError({...error, minLengthError: true})
+            return
+        } 
+        setError({...error, minLengthError: false})
         addUser({id: users[users.length - 1].id + 1, name: input.name, email: input.email})
         navigate('/')
     }
@@ -61,6 +99,8 @@ function Create() {
                             value={input.email}
                             onChange={handleChangeInput}
                             />
+                            {error.maxLengthError ? <p className='text-red-600'>Max length 30</p>: ''}
+                            {error.minLengthError ? <p className='text-red-600'>Min length 1</p>: ''}
                     </div>
                     <button className='py-2 px-3 bg-green-400 rounded-md hover:shadow-md'>Submit</button>
                 </form>
